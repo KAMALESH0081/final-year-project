@@ -58,7 +58,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             val bottom = it.y2 * height
 
             canvas.drawRect(left, top, right, bottom, boxPaint)
-            val drawableText = it.clsName
+            val drawableText = "${it.clsName} ${String.format("%.2f", it.cnf)}"
 
             textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bounds)
             val textWidth = bounds.width()

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_gpu"
+        android:title="Use GPU"
+        app:actionLayout="@layout/switch_item" />
+
+    <item
+        android:id="@+id/action_class"
+        android:title="Alert Class"
+        app:actionLayout="@layout/spinner_item" />
+
+    <item
+        android:id="@+id/action_confidence"
+        android:title="Confidence Thresholds"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_cooldown"
+        android:title="Cooldown"
+        app:actionLayout="@layout/edittext_item" />
+
+    <item
+        android:id="@+id/action_save"
+        android:title="Save"
+        app:showAsAction="always" />
+
+</menu>
