@@ -8,9 +8,9 @@
         app:actionLayout="@layout/switch_item" />
 
     <item
-        android:id="@+id/action_class"
-        android:title="Alert Class"
-        app:actionLayout="@layout/spinner_item" />
+        android:id="@+id/action_alert_classes"
+        android:title="Alert Classes"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_confidence"

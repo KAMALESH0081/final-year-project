@@ -14,9 +14,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -54,7 +52,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var locationManager: LocationManager
 
-    private var targetClass: String? = null
+    private var alertClasses: MutableSet<String> = mutableSetOf()
     private var confidenceThresholds: MutableMap<String, Float> = mutableMapOf()
     private var cooldown: Int = 5
     private var lastAlertTime = 0L
@@ -70,9 +68,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             detector = Detector(baseContext, MODEL_PATH, LABELS_PATH, this)
             detector?.labels?.forEach {
                 confidenceThresholds[it] = 0.5f
-            }
-            runOnUiThread {
-                setupAlertUI()
+                alertClasses.add(it)
             }
         }
 
@@ -93,14 +89,6 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.navView.setNavigationItemSelectedListener(this)
-    }
-
-    private fun setupAlertUI() {
-        val menu = binding.navView.menu
-        val classSpinnerItem = menu.findItem(R.id.action_class)
-        val classSpinner = classSpinnerItem.actionView as Spinner
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, detector?.labels ?: emptyList())
-        classSpinner.adapter = adapter
     }
 
     private fun startLocationUpdates() {
@@ -254,14 +242,16 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             }
 
             val currentTime = System.currentTimeMillis()
-            if (targetClass != null && currentTime - lastAlertTime > cooldown * 1000) {
+            if (currentTime - lastAlertTime > cooldown * 1000) {
                 for (box in boundingBoxes) {
-                    val threshold = confidenceThresholds[box.clsName] ?: 0.5f
-                    if (box.clsName == targetClass && box.cnf >= threshold) {
-                        val toneGen = ToneGenerator(5, 100)
-                        toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-                        lastAlertTime = currentTime
-                        break
+                    if (alertClasses.contains(box.clsName)) {
+                        val threshold = confidenceThresholds[box.clsName] ?: 0.5f
+                        if (box.cnf >= threshold) {
+                            val toneGen = ToneGenerator(5, 100)
+                            toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+                            lastAlertTime = currentTime
+                            break
+                        }
                     }
                 }
             }
@@ -290,15 +280,16 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
                     }
                 }
             }
+            R.id.action_alert_classes -> {
+                showClassSelectionDialog()
+            }
             R.id.action_confidence -> {
                 showConfidenceDialog()
             }
             R.id.action_save -> {
                 val menu = binding.navView.menu
-                val classSpinner = menu.findItem(R.id.action_class).actionView as Spinner
                 val cooldownEditText = menu.findItem(R.id.action_cooldown).actionView as EditText
 
-                targetClass = classSpinner.selectedItem.toString()
                 cooldown = cooldownEditText.text.toString().toIntOrNull() ?: 5
 
                 binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -306,6 +297,26 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             }
         }
         return true
+    }
+
+    private fun showClassSelectionDialog() {
+        val labels = detector?.labels?.toTypedArray() ?: emptyArray()
+        val checkedItems = BooleanArray(labels.size) {
+            alertClasses.contains(labels[it])
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Alert Classes")
+            .setMultiChoiceItems(labels, checkedItems) { _, which, isChecked ->
+                val selectedClass = labels[which]
+                if (isChecked) {
+                    alertClasses.add(selectedClass)
+                } else {
+                    alertClasses.remove(selectedClass)
+                }
+            }
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun showConfidenceDialog() {
