@@ -18,6 +18,16 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_global_confidence"
+        android:title="Global Confidence"
+        app:actionLayout="@layout/edittext_item" />
+
+    <item
+        android:id="@+id/action_iou_threshold"
+        android:title="IOU Threshold"
+        app:actionLayout="@layout/edittext_item" />
+
+    <item
         android:id="@+id/action_cooldown"
         android:title="Cooldown"
         app:actionLayout="@layout/edittext_item" />

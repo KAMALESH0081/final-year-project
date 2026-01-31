@@ -33,6 +33,9 @@ class Detector(
     private var numChannel = 0
     private var numElements = 0
 
+    private var confidenceThreshold = 0.3f
+    private var iouThreshold = 0.5f
+
     private val imageProcessor = ImageProcessor.Builder()
         .add(NormalizeOp(INPUT_MEAN, INPUT_STANDARD_DEVIATION))
         .add(CastOp(INPUT_IMAGE_TYPE))
@@ -112,6 +115,11 @@ class Detector(
         interpreter = Interpreter(model, options)
     }
 
+    fun updateThresholds(confidence: Float, iou: Float) {
+        confidenceThreshold = confidence
+        iouThreshold = iou
+    }
+
     fun close() {
         interpreter.close()
     }
@@ -150,7 +158,7 @@ class Detector(
         val boundingBoxes = mutableListOf<BoundingBox>()
 
         for (c in 0 until numElements) {
-            var maxConf = CONFIDENCE_THRESHOLD
+            var maxConf = confidenceThreshold
             var maxIdx = -1
             var j = 4
             var arrayIdx = c + numElements * j
@@ -163,7 +171,7 @@ class Detector(
                 arrayIdx += numElements
             }
 
-            if (maxConf > CONFIDENCE_THRESHOLD) {
+            if (maxConf > confidenceThreshold) {
                 val clsName = labels[maxIdx]
                 val cx = array[c] // 0
                 val cy = array[c + numElements] // 1
@@ -206,7 +214,7 @@ class Detector(
             while (iterator.hasNext()) {
                 val nextBox = iterator.next()
                 val iou = calculateIoU(first, nextBox)
-                if (iou >= IOU_THRESHOLD) {
+                if (iou >= iouThreshold) {
                     iterator.remove()
                 }
             }
@@ -236,7 +244,5 @@ class Detector(
         private const val INPUT_STANDARD_DEVIATION = 255f
         private val INPUT_IMAGE_TYPE = DataType.FLOAT32
         private val OUTPUT_IMAGE_TYPE = DataType.FLOAT32
-        private const val CONFIDENCE_THRESHOLD = 0.3F
-        private const val IOU_THRESHOLD = 0.5F
     }
 }

@@ -54,6 +54,8 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
 
     private var alertClasses: MutableSet<String> = mutableSetOf()
     private var confidenceThresholds: MutableMap<String, Float> = mutableMapOf()
+    private var globalConfidence: Float = 0.3f
+    private var iouThreshold: Float = 0.5f
     private var cooldown: Int = 5
     private var lastAlertTime = 0L
 
@@ -289,8 +291,16 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             R.id.action_save -> {
                 val menu = binding.navView.menu
                 val cooldownEditText = menu.findItem(R.id.action_cooldown).actionView as EditText
+                val globalConfidenceEditText = menu.findItem(R.id.action_global_confidence).actionView as EditText
+                val iouThresholdEditText = menu.findItem(R.id.action_iou_threshold).actionView as EditText
 
                 cooldown = cooldownEditText.text.toString().toIntOrNull() ?: 5
+                globalConfidence = globalConfidenceEditText.text.toString().toFloatOrNull() ?: 0.3f
+                iouThreshold = iouThresholdEditText.text.toString().toFloatOrNull() ?: 0.5f
+
+                cameraExecutor.submit {
+                    detector?.updateThresholds(globalConfidence, iouThreshold)
+                }
 
                 binding.drawerLayout.closeDrawer(GravityCompat.END)
                 Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show()
