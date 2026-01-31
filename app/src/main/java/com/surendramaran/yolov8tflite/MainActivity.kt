@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
     private var globalConfidence: Float = 0.3f
     private var iouThreshold: Float = 0.5f
     private var cooldown: Int = 5
-    private var lastAlertTime = 0L
+    private val lastAlertTimes = mutableMapOf<String, Long>()
     private val alertHistory = mutableListOf<AlertRecord>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -245,11 +245,13 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             }
 
             val currentTime = System.currentTimeMillis()
-            if (currentTime - lastAlertTime > cooldown * 1000) {
-                for (box in boundingBoxes) {
-                    if (alertClasses.contains(box.clsName)) {
-                        val threshold = confidenceThresholds[box.clsName] ?: 0.5f
-                        if (box.cnf >= threshold) {
+            val alertedClassesInFrame = mutableSetOf<String>()
+            for (box in boundingBoxes) {
+                if (alertClasses.contains(box.clsName) && !alertedClassesInFrame.contains(box.clsName)) {
+                    val threshold = confidenceThresholds[box.clsName] ?: 0.5f
+                    if (box.cnf >= threshold) {
+                        val lastAlertTimeForClass = lastAlertTimes[box.clsName] ?: 0L
+                        if (currentTime - lastAlertTimeForClass > cooldown * 1000) {
                             var speed = 0f
                             if (ActivityCompat.checkSelfPermission(
                                     this,
@@ -264,8 +266,8 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
                             alertHistory.add(AlertRecord(box.clsName, box.cnf, speed * 3.6f))
                             val toneGen = ToneGenerator(5, 100)
                             toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-                            lastAlertTime = currentTime
-                            break
+                            lastAlertTimes[box.clsName] = currentTime
+                            alertedClassesInFrame.add(box.clsName)
                         }
                     }
                 }
