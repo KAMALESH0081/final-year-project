@@ -19,7 +19,7 @@
 
     <item
         android:id="@+id/action_global_confidence"
-        android:title="Global Confidence"
+        android.title="Global Confidence"
         app:actionLayout="@layout/edittext_item" />
 
     <item
@@ -31,6 +31,11 @@
         android:id="@+id/action_cooldown"
         android:title="Cooldown"
         app:actionLayout="@layout/edittext_item" />
+
+    <item
+        android:id="@+id/action_view_alerts"
+        android:title="View Alerts"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_save"

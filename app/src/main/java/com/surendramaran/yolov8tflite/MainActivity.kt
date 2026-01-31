@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
     private var iouThreshold: Float = 0.5f
     private var cooldown: Int = 5
     private var lastAlertTime = 0L
+    private val alertHistory = mutableListOf<AlertRecord>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,6 +250,18 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
                     if (alertClasses.contains(box.clsName)) {
                         val threshold = confidenceThresholds[box.clsName] ?: 0.5f
                         if (box.cnf >= threshold) {
+                            var speed = 0f
+                            if (ActivityCompat.checkSelfPermission(
+                                    this,
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                                    this,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                ) == PackageManager.PERMISSION_GRANTED
+                            ) {
+                                speed = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)?.speed ?: 0f
+                            }
+                            alertHistory.add(AlertRecord(box.clsName, box.cnf, speed * 3.6f))
                             val toneGen = ToneGenerator(5, 100)
                             toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
                             lastAlertTime = currentTime
@@ -288,6 +301,9 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             R.id.action_confidence -> {
                 showConfidenceDialog()
             }
+            R.id.action_view_alerts -> {
+                showAlertHistoryDialog()
+            }
             R.id.action_save -> {
                 val menu = binding.navView.menu
                 val cooldownEditText = menu.findItem(R.id.action_cooldown).actionView as EditText
@@ -307,6 +323,20 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
             }
         }
         return true
+    }
+
+    private fun showAlertHistoryDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_alert_history, null)
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.rvAlertHistory)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val adapter = AlertHistoryAdapter(alertHistory)
+        recyclerView.adapter = adapter
+
+        AlertDialog.Builder(this)
+            .setTitle("Alert History")
+            .setView(dialogView)
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun showClassSelectionDialog() {
