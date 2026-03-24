@@ -10,8 +10,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.media.ToneGenerator
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.widget.EditText
@@ -92,6 +90,23 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.navView.setNavigationItemSelectedListener(this)
+
+        val menu = binding.navView.menu
+
+        // GPU Switch Initialization
+        val gpuItem = menu.findItem(R.id.action_gpu)
+        val gpuSwitch = gpuItem.actionView as SwitchCompat
+        gpuSwitch.isChecked = true
+        gpuSwitch.setOnCheckedChangeListener { _, isChecked ->
+            cameraExecutor.submit {
+                detector?.restart(isGpu = isChecked)
+            }
+        }
+
+        // Initialize values
+        (menu.findItem(R.id.action_global_confidence).actionView as? EditText)?.setText(globalConfidence.toString())
+        (menu.findItem(R.id.action_iou_threshold).actionView as? EditText)?.setText(iouThreshold.toString())
+        (menu.findItem(R.id.action_cooldown).actionView as? EditText)?.setText(cooldown.toString())
     }
 
     private fun startLocationUpdates() {
@@ -289,14 +304,6 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, LocationLis
     override fun onProviderDisabled(provider: String) {}
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_gpu -> {
-                val gpuSwitch = item.actionView as SwitchCompat
-                gpuSwitch.setOnCheckedChangeListener { _, isChecked ->
-                    cameraExecutor.submit {
-                        detector?.restart(isGpu = isChecked)
-                    }
-                }
-            }
             R.id.action_alert_classes -> {
                 showClassSelectionDialog()
             }
