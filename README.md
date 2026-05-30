@@ -1,20 +1,89 @@
-## YOLOv8 Live Object Detection Android Application
+# Traffic Sign Detection Android App
 
-### Notice
-This project has been moved to a new repository. You can find the latest version and updates [here](https://github.com/surendramaran/YOLO).
+## Overview
 
-### Description
-This Android application is designed to perform live object detection using the YOLOv8 machine learning model. YOLOv8 (You Only Look Once version 8) is known for its real-time object detection capabilities, and this app brings that functionality to Android devices.
+A real-time Android traffic sign detection application powered by YOLOv8 and TensorFlow Lite (FP16). The application performs on-device inference using the smartphone camera and provides configurable detection settings for improved usability and deployment flexibility.
 
-### Getting Started
-To use this repository for any custom YOLOv8 Object detection model, follow these steps:
-1. Clone this repository to your local machine using `git clone https://github.com/surendramaran/YOLOv8-TfLite-Object-Detector`.
-2. Put your .tflite model and .txt label file inside the assets folder
-3. Rename paths of your model and labels file in Constants.kt file
-4. **Build and Run:**
+The project covers the complete computer vision pipeline, including dataset collection, annotation, model training, model optimization, TensorFlow Lite conversion, and Android deployment.
 
-### Contributing
-Contributions are welcome! If you want to contribute to this project, feel free to fork the repository and submit a pull request with your changes.
+## Features
 
-### Contact
-For any questions or feedback, feel free to contact [surendramaran8@gmail.com] or open an [issue](https://github.com/surendramaran/YOLOv8-TfLite-Object-Detector/issues/new) in the repository.
+### Real-Time Detection
+
+* Live traffic sign detection using the device camera
+* On-device inference using TensorFlow Lite
+* Low-latency real-time performance
+
+### Detection Controls
+
+* Global confidence threshold adjustment
+* Class-specific confidence threshold adjustment
+* IoU threshold configuration
+* Enable or disable individual traffic sign classes
+
+### Alert Management
+
+* Detection history logging
+* Timestamped detection records
+* Confidence score tracking
+* Alert saving for future review
+
+### Cooldown Mechanism
+
+* Configurable cooldown period for detected classes
+* Prevents repeated alerts for the same traffic sign
+* Improves user experience during continuous detection
+
+## Model
+
+* Architecture: YOLOv8n
+* Deployment Format: TensorFlow Lite FP16
+* Model Size Reduction:
+
+  * Original Model: ~6 MB
+  * TFLite FP16 Model: ~3 MB
+
+## Technology Stack
+
+* Python
+* YOLOv8
+* TensorFlow Lite
+* OpenCV
+* Android Studio
+* Java/Kotlin
+* CameraX
+
+## Application Workflow
+
+Road Scene → Camera Feed → TFLite Model → Traffic Sign Detection → Alert Generation → Detection History Storage
+
+## Screenshots
+
+### Detection Screen
+
+*Add traffic sign detection screenshot here.*
+
+### Settings Panel
+
+*Add application settings UI screenshot here.*
+
+## Key Functionalities
+
+* Real-time traffic sign recognition
+* Mobile edge AI deployment
+* Dynamic confidence threshold tuning
+* Per-class detection control
+* Detection history management
+* Alert cooldown handling
+* Lightweight FP16 optimized model
+
+## Future Improvements
+
+* Support additional traffic sign categories
+* GPS-based location logging
+* Voice alerts for detected signs
+* Cloud synchronization of detection logs
+
+## Author
+
+Kamalesh V
