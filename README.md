@@ -58,13 +58,13 @@ The project covers the complete computer vision pipeline, including dataset coll
 ### Real-Time Detection
 
 <p align="center">
-  <img src="screenshots/detection_screen.jpg" width="300">
+  <img src="screenshots/final_year_project_img_1.jpeg" width="300">
 </p>
 
 ### Detection Settings
 
 <p align="center">
-  <img src="screenshots/settings_screen.jpg" width="300">
+  <img src="screenshots/final_year_project_img_2.jpeg" width="300">
 </p>
 
 ## Key Functionalities
