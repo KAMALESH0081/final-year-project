@@ -53,19 +53,19 @@ The project covers the complete computer vision pipeline, including dataset coll
 * Java/Kotlin
 * CameraX
 
-## Application Workflow
+## Application Screenshots
 
-Road Scene → Camera Feed → TFLite Model → Traffic Sign Detection → Alert Generation → Detection History Storage
+### Real-Time Detection
 
-## Screenshots
+<p align="center">
+  <img src="screenshots/detection_screen.jpg" width="300">
+</p>
 
-### Detection Screen
+### Detection Settings
 
-![Detection Screen](screenshots/final_year_project_img_1.jpeg)
-
-### Settings Panel
-
-![Settings Screen](screenshots/final_year_project_img_2.jpeg)
+<p align="center">
+  <img src="screenshots/settings_screen.jpg" width="300">
+</p>
 
 ## Key Functionalities
 
