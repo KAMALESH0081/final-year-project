@@ -61,11 +61,11 @@ Road Scene → Camera Feed → TFLite Model → Traffic Sign Detection → Alert
 
 ### Detection Screen
 
-![Detection Screen](screenshots/final_year_project_img_1.jpg)
+![Detection Screen](screenshots/final_year_project_img_1.jpeg)
 
 ### Settings Panel
 
-![Settings Screen](screenshots/final_year_project_img_2.jpg)
+![Settings Screen](screenshots/final_year_project_img_2.jpeg)
 
 ## Key Functionalities
 
